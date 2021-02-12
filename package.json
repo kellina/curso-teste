@@ -1,0 +1,42 @@
+{
+  "name": "seubarriga",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": " node src/server.js",
+    "test": "jest",
+    "lint": "eslint --fix --ext .js,.jsx .",
+    "secure-mode": "jest --watchAll --verbose=true"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "D": "^1.0.0",
+    "body-parser": "^1.19.0",
+    "consign": "^0.1.6",
+    "express": "^4.17.1",
+    "knex": "^0.21.17",
+    "knex-logger": "^0.1.0",
+    "pg": "^8.5.1",
+    "stylelint": "^13.9.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.19.0",
+    "eslint-config-airbnb-base": "14.2.1",
+    "eslint-plugin-import": "2.22.1",
+    "jest": "23.6.0",
+    "prettier": "2.2.1",
+    "stylelint-config-prettier": "^8.0.2",
+    "supertest": "3.3.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  }
+}
