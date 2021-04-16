@@ -1,40 +1,49 @@
-const app = require('../app');
+const express = require('express');
+const RecursoIndevidoError = require('../errors/RecursoIndevidoError');
 
 module.exports = (app) => {
-    const create = (req, res) => {
-        app.services.account.save(req.body)
+    const router = express.Router();
+
+    router.param('id', (req, res, next) => {
+        app.services.account.find({ id: req.params.id })
+            .then((acc) => {
+                if (acc.user_id !== req.user.id) throw new RecursoIndevidoError();
+                else next();
+            }).catch((err) => next(err));
+    });
+
+    router.post('/', (req, res, next) => {
+        app.services.account.save({ ...req.body, user_id: req.user.id })
             .then((result) => {
                 return res.status(201).json(result[0]);
-            }).catch((err) => res.status(400).json({error: err.message }))
-    };
+            }).catch((err) => next(err));
+    });
 
-    const getAll = (req, res) => {
-        app.services.account.findAll()
+    router.get('/', (req, res, next) => {
+        app.services.account.findAll(req.user.id)
             .then((result) => {
                 return res.status(200).json(result);
-            });
-    };
+            }).catch((err) => next(err));
+    });
 
-    const get = (req, res) => {
+    router.get('/:id', (req, res, next) => {
         app.services.account.find({ id: req.params.id })
             .then((result) => {
                 return res.status(200).json(result);
-            });
-    };
+            }).catch((err) => next(err));
+    });
 
-    const update = (req, res) => {
+    router.put('/:id', (req, res, next) => {
         app.services.account.update(req.params.id, req.body)
             .then((result) => {
                 return res.status(200).json(result[0]);
-            });
-    };
+            }).catch((err) => next(err));
+    });
 
-    const remove = (req, res) => {
+    router.delete('/:id', (req, res, next) => {
         app.services.account.remove(req.params.id)
-            .then(() => res.status(204).send());
-    };
-
-    return {
-        create, getAll, get, update, remove,
-    };
+            .then(() => res.status(204).send())
+            .catch((err) => next(err));
+    });
+    return router;
 };
